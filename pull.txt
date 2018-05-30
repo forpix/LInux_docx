@@ -1,1 +1,35 @@
-text here is good
+pipeline {
+    agent any
+    stages {
+        stage("Stage 1") {
+            steps {
+                sh 'pwd'
+}
+    }
+	stage("Stage 2") {
+            steps {
+                sh 'git pull origin working'
+                sh 'git fetch --all'
+}
+    }
+    }
+    post { 
+        success{ 
+                sh 'git add -A'
+                sh 'git checkout master'
+                sh 'git merge origin/working'
+                sh '''
+                if [ -f Jenkinsfile ] ; then
+                    rm Jenkinsfile
+                    git add .;git commit -m "new"
+                     fi
+                '''
+                sh 'git clean -ffd'
+                sh 'git fetch origin'
+                sh 'git branch -a;git pull --rebase origin master'
+                sh 'git remote set-url origin "https://c5271915:Moula%40470@github.wdf.sap.corp/c5271915/Testing.git"'
+                sh "git push origin master " 
+        }   
+        }
+        
+}
